@@ -12,7 +12,7 @@ async function insertUser (fullName, username, password) {
         throw err;
     }
 }
-u
+
 async function makeMember(id) {
     try {
         await pool.query("UPDATE users SET is_member = true WHERE id = $1;", [id]);
@@ -24,7 +24,7 @@ async function makeMember(id) {
 
 async function insertMessage(userId, title, body) {
     try {
-        await pool.query("INSERT INTO messages (user_id, title, body) VALUES ($1. $2. $3);", [
+        await pool.query("INSERT INTO messages (user_id, title, body) VALUES ($1, $2, $3);", [
             userId,
             title, 
             body,

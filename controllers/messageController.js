@@ -8,11 +8,16 @@ exports.postCreateMessage = async (req, res) => {
     const { title, body } = req.body;
     const userId = req.user.id;
     await insertMessage(userId, title, body);
-    return render("make-message", {msg : "success!"});
+    return res.render("make-message", {msg : "success!"});
 }
 
 exports.postDeleteMessage = async (req, res) => {
-    const {id} = req.body;
-    await deleteMessage(id);
-    
-}
+    try {
+        const { id } = req.body;
+        await deleteMessage(id);
+        res.status(200).send("Deleted");
+    } catch (err) {
+        console.error("Error in postDeleteMessage:", err);
+        res.status(500).send("Error deleting message");
+    }
+};

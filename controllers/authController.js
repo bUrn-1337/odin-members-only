@@ -1,4 +1,5 @@
 const passport = require('../config/passport');
+const bcrypt = require('bcryptjs');
 const { body, validationResult } = require("express-validator");
 const alphaErr = "must only contain letters.";
 

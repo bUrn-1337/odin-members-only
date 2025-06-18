@@ -7,10 +7,10 @@
 </head>
 <body>
     <%if (messages) {%>
-        <% message.forEach(message => { %>
+        <% messages.forEach(message => { %>
             <div class="message">
                 <dl>
-                    <% for (const [key, value] of Object.entries(obj)) { %>
+                    <% for (const [key, value] of Object.entries(message)) { %>
                         <dt><%= key %></dt>
                         <dd><%= value %></dd>
                     <% } %>
@@ -33,7 +33,8 @@
                 })
                 .then((res) => res.text())
                 .then((data) => {
-                    alert("DELETED")
+                    alert("DELETED");
+                    location.reload();
                 }).catch((err) => {
                     console.log(err);
                 });
