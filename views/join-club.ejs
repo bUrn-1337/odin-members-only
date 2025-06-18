@@ -5,6 +5,9 @@
   <title>Join Club</title>
 </head>
 <body>
+  <% if (locals.error) {%>
+      <%= error %>
+  <% } %> 
   <h1>Join The Club!</h1>
   <form action="/login" method="POST">
     <label for="passcode">Enter Passcode!</label>

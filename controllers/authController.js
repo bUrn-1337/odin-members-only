@@ -1,3 +1,4 @@
+const passport = require('../config/passport');
 const { body, validationResult } = require("express-validator");
 const alphaErr = "must only contain letters.";
 
@@ -8,8 +9,9 @@ const validateUser = [
         .isAlpha().withMessage(`username ${alphaErr}`),
     body("password").trim()
         .isAlpha().withMessage(`password ${alphaErr}`),
-    body("fullName")    
-        .isAlpha().withMessage(`full name ${alphaErr}`),
+    body("fullName").trim()
+        .matches(/^[a-zA-Z\s]+$/)
+        .withMessage("full name must only contain letters and spaces"),      
     body("passwordConfirmation").custom((value, { req }) => {
         return value === req.body.password;
     }).withMessage("the passwords don't match"),
@@ -17,16 +19,16 @@ const validateUser = [
 
 exports.getRegister = (req, res) => {
     if (req.isAuthenticated()) {
-        res.redirect("/");
+        return res.redirect("/");
     }
-    res.render("register");
+    return res.render("register", { errors: [] });
 };
 
 exports.getLogin = (req, res) => {
     if (req.isAuthenticated()) {
-        res.redirect("/");
+        return res.redirect("/");
     }
-    res.render("login");
+    return res.render("login");
 };
 
 exports.postRegister = [
@@ -35,15 +37,17 @@ exports.postRegister = [
         if (!req.isAuthenticated()) {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return res.status(400).render("createUser", {
+                console.log(errors);
+                return res.status(400).render("register", {
                     title: "Create user",
                     errors: errors.array(),
                 });
             }
             const { fullName, username, password } = req.body;
             try {
-                await insertUser(fullName, username, password);
-                res.redirect("/login");
+                const hashedPassword = await bcrypt.hash(password, 10);
+                await insertUser(fullName, username, hashedPassword);
+                return res.redirect("/login");
             } catch (err) {
                 next(err);
             }
@@ -51,11 +55,23 @@ exports.postRegister = [
     }
 ];
 
-exports.postLogin = (req, res) => {
-    if (!req.isAuthenticated()) {
-        passport.authenticate("local", {
-            successRedirect: "/",
-            failureRedirect: "/"
-        });
+exports.postLogin = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return res.redirect("/");
     }
+    
+    passport.authenticate("local", (err, user, info) => {
+        if (err) {
+            console.log(err);
+            return next(err);
+        }
+        if (!user) {
+            console.log("abcd");
+            return res.redirect("/login");
+        }
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+            return res.redirect("/");
+        });
+    })(req, res, next);
 };

@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
-const pool = require('../db');
+const bcrypt = require('bcryptjs');
+const pool = require('../db/pool');
 
 passport.use(
   new LocalStrategy({ usernameField: 'username' }, async (username, password, done) => {
@@ -26,7 +26,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const { rows } = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    const { rows } = await pool.query("SELECT id, full_name, username, is_member, is_admin FROM users WHERE id = $1", [id]);
     done(null, rows[0]);
   } catch (err) {
     done(err);

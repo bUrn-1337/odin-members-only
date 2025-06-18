@@ -6,6 +6,12 @@
 </head>
 <body>
   <h1>Register</h1>
+  <% if (errors) { %>
+    <% errors.forEach((error) => { %>
+      <div><%= error.msg %></div>
+    <% }); %>
+  <% } %>
+  
   <form action="/register" method="POST">
     <label for="fullName">Full Name</label>
     <input id="fullName" name="fullName" placeholder="full name" type="text" />
@@ -13,8 +19,8 @@
     <input id="username" name="username" placeholder="username" type="text" />
     <label for="password">Password</label>
     <input id="password" name="password" type="password" />
-    <label for="confirmPassword">Confirm Password</label>
-    <input id="confirmPassword" name="confirmPassword" type="password" />
+    <label for="passwordConfirmation">Confirm Password</label>
+    <input id="passwordConfirmation" name="passwordConfirmation" type="password" />
     <button type="submit">Sign Up</button>
   </form>
 </body>
