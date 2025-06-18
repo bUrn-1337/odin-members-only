@@ -6,6 +6,7 @@ const passport = require('./config/passport');
 const authRouter = require("./routes/auth");
 const clubRouter = require("./routes/club");
 const messageRouter = require("./routes/message");
+const adminRouter = require("./routes/admin");
 
 const indexController = require("./controllers/indexController");
 const { ensureAuthenticated } = require("./middlewares/auth");
@@ -27,7 +28,8 @@ app.use((req, res, next) => {
 app.use("/", authRouter);
 app.get ("/", ensureAuthenticated, indexController.index);
 app.use("/join-club", clubRouter);
-app.use("/make-message", messageRouter);
+app.use("/", messageRouter);
+app.use("/become-admin", adminRouter);
 
 app.use((err, req, res, next) => {
     console.error(err.stack); // Log the error for debugging

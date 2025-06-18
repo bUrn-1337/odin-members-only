@@ -15,8 +15,30 @@
                         <dd><%= value %></dd>
                     <% } %>
                 </dl>
+                <% if( currentUser && currentUser.is_admin) {%>
+                    <button class="delete" id="<%= message.id %>"> Delete </button>
+                <% } %>
             </div>
         <% });%>
     <% } %>
+    <script>
+        const deleteButtons = document.querySelectorAll(".delete");
+        deleteButtons.forEach((button)=> {
+            button.addEventListener("click", () => {
+                const id = button.id;
+                fetch("/delete-message", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ id: id })
+                })
+                .then((res) => res.text())
+                .then((data) => {
+                    alert("DELETED")
+                }).catch((err) => {
+                    console.log(err);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

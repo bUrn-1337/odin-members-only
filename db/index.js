@@ -15,7 +15,7 @@ async function insertUser (fullName, username, password) {
 u
 async function makeMember(id) {
     try {
-        await pool.query("UPDATE users SET is_member = true WHERE id = $1;", id);
+        await pool.query("UPDATE users SET is_member = true WHERE id = $1;", [id]);
     } catch (err) {
         console.log("Failed to make the user member:", err);
         throw err;
@@ -47,9 +47,28 @@ async function getMessages(isMember) {
         throw err;
     }
 }
+
+async function deleteMessage(id) {
+    try {
+        await pool.query("DELETE FROM messages WHERE id = $1", [id]);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+async function makeAdmin(id) {
+    try {
+        await pool.query("UPDATE users SET is_admin = true WHERE id = $1", [id]);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 module.exports = {
     insertUser,
     makeMember,
     insertMessage,
     getMessages,
+    deleteMessage,
+    makeAdmin,
 };
